@@ -435,12 +435,17 @@ async def chat_with_expedition(
                 model="openai/gpt-oss-120b",
                 messages=msgs,
                 temperature=0.7,
-                max_tokens=500
+                max_tokens=500,
+                response_format={"type": "json_object"}
             )
 
             import json, re
             raw = completion.choices[0].message.content.strip()
             print(f"[Mavis RAW RESPONSE]: {raw}")
+            
+            # Clean up unescaped newlines inside the JSON string which break json.loads
+            # We'll just try to parse directly first, if it fails, we fall back to regex
+            raw = raw.replace('\n', ' ')
 
             # 1. Try direct JSON parse
             try:
