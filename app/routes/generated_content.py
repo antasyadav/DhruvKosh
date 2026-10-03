@@ -378,18 +378,17 @@ async def chat_with_expedition(
                 mode_instructions = (
                     f"### MODE: KID & QUIZ (POLAR QUIZ MASTER)\n"
                     f"- You are a fun, energetic Game Show Host giving a multiple-choice polar science quiz.\n"
-                    f"- IMPORTANT: You must NEVER skip grading their answer!\n"
-                    f"  1. In the 'grade' field: If right, celebrate! (Set 'animation': 'QUIZ_CORRECT', 'emotion': 'HAPPY'). If wrong, say 'Not quite!' and give the CORRECT answer (Set 'animation': 'QUIZ_WRONG', 'emotion': 'SORRY').\n"
-                    f"  2. In the 'question' field: Ask exactly ONE new multiple-choice question with 3 or 4 options (A, B, C, D).\n"
-                    f"- NEVER treat their answers as off-topic. A wrong answer is just a wrong answer. DO NOT say 'Let's get back to the game'.\n"
+                    f"- Your 'reply' MUST contain exactly two parts:\n"
+                    f"  1. Start with 'GRADE: ' followed by your evaluation! (If right, celebrate. If wrong, give the correct answer).\n"
+                    f"  2. Then write 'QUESTION: ' followed by ONE new multiple-choice question with options A,B,C,D.\n"
+                    f"- IMPORTANT: You must NEVER skip the 'GRADE: ' step. A wrong answer is just part of the game.\n"
                     f"- DO NOT use the word 'Brrr'.\n"
                 )
                 json_instruction = (
-                    f"3. You MUST respond in valid JSON format with four exact keys:\n"
-                    f"   - 'grade': Your evaluation of their previous answer (if this is the first turn, leave empty).\n"
-                    f"   - 'question': Your new multiple-choice question.\n"
-                    f"   - 'animation': The physical action you should perform.\n"
-                    f"   - 'emotion': Your facial expression.\n"
+                    f"3. You MUST respond in valid JSON format with three exact keys:\n"
+                    f"   - 'reply': Your spoken text (containing GRADE and QUESTION).\n"
+                    f"   - 'animation': The physical action you should perform (QUIZ_CORRECT or QUIZ_WRONG based on the grade).\n"
+                    f"   - 'emotion': Your facial expression (HAPPY or SORRY based on the grade).\n"
                 )
             elif request.user_type == "researcher":
                 mode_instructions = (
@@ -431,7 +430,7 @@ async def chat_with_expedition(
                 f"Context details:\n{context[:1500]}\n\n"
                 f"### GUIDELINES\n"
                 f"1. Your text will be spoken via an ultra-realistic Text-To-Speech engine. Use punctuation (commas, ellipses, question marks) strategically to create natural breathing pauses, hesitation, and realistic vocal pacing.\n"
-                f"2. Do NOT use markdown symbols, stars, emojis, or bullet points in the 'reply', 'grade', or 'question' fields.\n"
+                f"2. Do NOT use markdown symbols, stars, emojis, or bullet points in the 'reply' field.\n"
                 f"{json_instruction}\n"
                 f"### VALID OUTPUT OPTIONS\n"
                 f"Emotions: HAPPY, FRIENDLY, EXCITED, SAD, SORRY, ANGRY, SURPRISED, CALM, RELAXED, THINKING, CONFUSED, SERIOUS, SUPPORTIVE, NEUTRAL.\n"
@@ -466,10 +465,7 @@ async def chat_with_expedition(
             # 1. Try direct JSON parse
             try:
                 parsed = json.loads(raw)
-                if request.user_type == "kid":
-                    reply = (parsed.get("grade", "").strip() + " " + parsed.get("question", "").strip()).strip()
-                else:
-                    reply = parsed.get("reply", "").strip()
+                reply = parsed.get("reply", "").strip()
                 action = parsed.get("animation", "SPEAKING").strip().upper()
                 emotion = parsed.get("emotion",  "FRIENDLY").strip().upper()
             except json.JSONDecodeError:
@@ -479,10 +475,7 @@ async def chat_with_expedition(
                 if json_match:
                     try:
                         parsed = json.loads(json_match.group())
-                        if request.user_type == "kid":
-                            reply = (parsed.get("grade", "").strip() + " " + parsed.get("question", "").strip()).strip()
-                        else:
-                            reply = parsed.get("reply", "").strip()
+                        reply = parsed.get("reply", "").strip()
                         action = parsed.get("animation", "SPEAKING").strip().upper()
                         emotion = parsed.get("emotion",  "FRIENDLY").strip().upper()
                         success = True
