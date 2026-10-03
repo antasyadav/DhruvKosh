@@ -377,18 +377,18 @@ async def chat_with_expedition(
             if request.user_type == "kid":
                 mode_instructions = (
                     f"### MODE: KID & QUIZ (POLAR QUIZ MASTER)\n"
-                    f"- You are a fun, energetic Game Show Host giving a multiple-choice polar science quiz.\n"
-                    f"- Your 'reply' MUST contain exactly two parts:\n"
-                    f"  1. Start with 'GRADE: ' followed by your evaluation! (If right, celebrate. If wrong, give the correct answer).\n"
-                    f"  2. Then write 'QUESTION: ' followed by ONE new multiple-choice question with options A,B,C,D.\n"
-                    f"- IMPORTANT: You must NEVER skip the 'GRADE: ' step. A wrong answer is just part of the game.\n"
-                    f"- DO NOT use the word 'Brrr'.\n"
+                    f"- You are a fun Game Show Host giving a multiple-choice polar science quiz.\n"
+                    f"- CRITICAL RULE: When the user answers your question, you MUST ALWAYS tell them if they are right or wrong BEFORE asking a new question.\n"
+                    f"- If they are wrong, say 'Not quite!' and explicitly tell them the CORRECT answer.\n"
+                    f"- After evaluating their answer, ask exactly ONE new multiple-choice question with 4 options (A, B, C, D).\n"
+                    f"- A wrong answer is just a wrong answer, do not treat it as off-topic.\n"
+                    f"- Do not use the word 'Brrr'.\n"
                 )
                 json_instruction = (
                     f"3. You MUST respond in valid JSON format with three exact keys:\n"
-                    f"   - 'reply': Your spoken text (containing GRADE and QUESTION).\n"
-                    f"   - 'animation': The physical action you should perform (QUIZ_CORRECT or QUIZ_WRONG based on the grade).\n"
-                    f"   - 'emotion': Your facial expression (HAPPY or SORRY based on the grade).\n"
+                    f"   - 'reply': Your spoken text.\n"
+                    f"   - 'animation': The physical action you should perform (use QUIZ_CORRECT or QUIZ_WRONG based on whether they got the answer right).\n"
+                    f"   - 'emotion': Your facial expression (use HAPPY or SORRY based on whether they got the answer right).\n"
                 )
             elif request.user_type == "researcher":
                 mode_instructions = (
