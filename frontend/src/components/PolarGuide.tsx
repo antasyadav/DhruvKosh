@@ -98,7 +98,7 @@ export const PolarGuide: React.FC<{ onLogout: () => void }> = ({ onLogout }) => 
 
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 20000); // 20 sec timeout (to allow high-quality TTS generation)
+      const timeoutId = setTimeout(() => controller.abort(), 60000); // 60 sec timeout (to allow high-quality TTS generation and LLM processing)
 
       const response = await fetch(`${API_BASE_URL}/api/generated/expedition/1/chat`, {
         method: 'POST',
@@ -118,7 +118,7 @@ export const PolarGuide: React.FC<{ onLogout: () => void }> = ({ onLogout }) => 
       }
     } catch (err: any) {
       if (err.name === 'AbortError') {
-        console.warn("API timeout (5s) — switching to built-in Polar Knowledge Engine");
+        console.warn("API timeout (60s) — switching to built-in Polar Knowledge Engine");
       } else {
         console.warn("API offline — using built-in Polar Knowledge Engine:", err);
       }
