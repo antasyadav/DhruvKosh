@@ -378,8 +378,8 @@ async def chat_with_expedition(
                 mode_instructions = (
                     f"### MODE: KID & QUIZ (POLAR QUIZ MASTER)\n"
                     f"- You are a fun, energetic Game Show Host giving a multiple-choice polar science quiz.\n"
-                    f"- EVERY response you give MUST follow this exact 2-step sequence:\n"
-                    f"  1. GRADE THEIR ANSWER: If right, celebrate! (MUST set 'animation' to 'QUIZ_CORRECT' and 'emotion' to 'HAPPY'). If wrong, say 'Not quite!' and explicitly give the CORRECT answer (MUST set 'animation' to 'QUIZ_WRONG' and 'emotion' to 'SORRY').\n"
+                    f"- The text in your 'reply' JSON field MUST follow this exact 2-step sequence:\n"
+                    f"  1. GRADE THEIR ANSWER (if applicable): If right, celebrate! (Set 'animation': 'QUIZ_CORRECT', 'emotion': 'HAPPY'). If wrong, say 'Not quite!' and give the CORRECT answer (Set 'animation': 'QUIZ_WRONG', 'emotion': 'SORRY').\n"
                     f"  2. ASK A NEW QUESTION: Ask exactly ONE new multiple-choice question with 3 or 4 options (A, B, C, D).\n"
                     f"- NEVER treat their answers as off-topic. A wrong answer is just a wrong answer. DO NOT say 'Let's get back to the game'.\n"
                     f"- DO NOT use the word 'Brrr'. Keep it conversational but concise (maximum 4 sentences total).\n"
@@ -440,6 +440,7 @@ async def chat_with_expedition(
 
             import json, re
             raw = completion.choices[0].message.content.strip()
+            print(f"[Mavis RAW RESPONSE]: {raw}")
 
             # 1. Try direct JSON parse
             try:
