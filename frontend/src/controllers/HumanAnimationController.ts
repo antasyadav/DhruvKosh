@@ -158,15 +158,19 @@ export class HumanAnimationController {
     this.blinkTimer += delta;
 
     if (this.isBlinking) {
-      if (this.blinkTimer > 0.12) {
+      // 0.15s blink duration. Sine wave goes from 0 to 1 to 0.
+      const progress = this.blinkTimer / 0.15; 
+      if (progress >= 1.0) {
         this.setBlendshapes(['blink', 'blinkLeft', 'blinkRight'], 0);
         this.isBlinking = false;
         this.blinkTimer = 0;
         this.nextBlinkInterval = 2.5 + Math.random() * 3.5;
+      } else {
+        const value = Math.sin(progress * Math.PI) * 0.85; // max 0.85 to prevent aggressive squinting
+        this.setBlendshapes(['blink', 'blinkLeft', 'blinkRight'], value);
       }
     } else {
       if (this.blinkTimer > this.nextBlinkInterval) {
-        this.setBlendshapes(['blink', 'blinkLeft', 'blinkRight'], 1.0);
         this.isBlinking = true;
         this.blinkTimer = 0;
       }

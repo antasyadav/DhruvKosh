@@ -100,19 +100,19 @@ export class LipSyncSystem {
     // 3. VOWEL LOGIC
     const rawValues = {
       // 'A' (Aaa) - Jaws drop heavily based on volume and mid frequency
-      vowelA: intensity * (midFreq / 255) * 1.2,
+      vowelA: intensity * (midFreq / 255) * 0.65,
       
       // 'E' (Eee) - Needs mid-high frequency
-      vowelE: intensity * (highFreq / 255) * 0.8,
+      vowelE: intensity * (highFreq / 255) * 0.45,
       
       // 'I' (Ihh) - Triggers on S/T/Sh sounds (Teeth clenching)
-      vowelI: Math.min(1.0, (highFreq / 255) * 1.5),
+      vowelI: Math.min(0.6, (highFreq / 255) * 0.8),
       
       // 'O' (Ohh) - Round lips, combination of bass and volume
-      vowelO: intensity * (bassFreq / 255) * 1.1,
+      vowelO: intensity * (bassFreq / 255) * 0.65,
       
       // 'U' (Ooo) - Pursed lips, triggers when bass dominates over mid
-      vowelU: (bassFreq > midFreq) ? intensity * 0.8 : 0.1
+      vowelU: (bassFreq > midFreq) ? intensity * 0.5 : 0.05
     };
 
     // Prevent values from going above 1.0 or below 0.0
