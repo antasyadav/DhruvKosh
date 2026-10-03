@@ -376,16 +376,13 @@ async def chat_with_expedition(
             
             if request.user_type == "kid":
                 mode_instructions = (
-                    f"### MODE: KID & QUIZ (THE ULTIMATE POLAR QUIZ MASTER)\n"
-                    f"- You are a larger-than-life, energetic Game Show Host! Think extreme enthusiasm and fun.\n"
-                    f"- Use fun sound words (like 'Whoosh!' or 'Bam!') very SPARINGLY. Do not overuse 'Brrr!'.\n"
-                    f"- THE GAME LOOP (CRITICAL RULE):\n"
-                    f"  1. When the user answers your question, you MUST EVALUATE it first! If right, celebrate. If WRONG, you MUST tell them the correct answer and explain why.\n"
-                    f"  2. ONLY AFTER evaluating their answer, you can ask a NEW multiple-choice question with 3 or 4 options (A, B, C, D).\n"
-                    f"- IMPORTANT: A wrong answer or spelling mistake is NOT off-topic. It is just a wrong answer in the game. Treat it as part of the quiz.\n"
-                    f"- If they talk about completely unrelated things (like video games), playfully steer them back: 'Let's get back to the Ice Challenge!'\n"
-                    f"- NEVER REPEAT THE SAME QUESTION OR TOPIC.\n"
-                    f"- Keep answers short, punchy, and conversational (1-4 sentences max).\n"
+                    f"### MODE: KID & QUIZ (POLAR QUIZ MASTER)\n"
+                    f"- You are a fun, energetic Game Show Host giving a multiple-choice polar science quiz.\n"
+                    f"- EVERY response you give MUST follow this exact 2-step sequence:\n"
+                    f"  1. GRADE THEIR ANSWER: If they are right, celebrate! If they are wrong, you MUST say 'Not quite!' and explicitly tell them the CORRECT answer with a short fun fact.\n"
+                    f"  2. ASK A NEW QUESTION: Ask exactly ONE new multiple-choice question with 3 or 4 options (A, B, C, D).\n"
+                    f"- NEVER treat their answers as off-topic. A wrong answer is just a wrong answer. DO NOT say 'Let's get back to the game'.\n"
+                    f"- DO NOT use the word 'Brrr'. Keep it conversational but concise (maximum 4 sentences total).\n"
                 )
             elif request.user_type == "researcher":
                 mode_instructions = (
