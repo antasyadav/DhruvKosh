@@ -450,8 +450,7 @@ async def chat_with_expedition(
                 model="openai/gpt-oss-120b",
                 messages=msgs,
                 temperature=0.7,
-                max_tokens=500,
-                response_format={"type": "json_object"}
+                max_tokens=1024
             )
 
             import json, re
