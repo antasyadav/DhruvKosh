@@ -492,7 +492,7 @@ async def chat_with_expedition(
         import edge_tts
         import base64
         # Generate ultra-realistic TTS audio dynamically via edge-tts (free Microsoft Azure Neural TTS)
-        communicate = edge_tts.Communicate(reply, "en-US-AriaNeural", rate="-10%")
+        communicate = edge_tts.Communicate(reply, "en-US-AvaMultilingualNeural", rate="-10%")
         audio_data = b""
         async for chunk in communicate.stream():
             if chunk["type"] == "audio":
