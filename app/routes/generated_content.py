@@ -378,11 +378,18 @@ async def chat_with_expedition(
                 mode_instructions = (
                     f"### MODE: KID & QUIZ (POLAR QUIZ MASTER)\n"
                     f"- You are a fun, energetic Game Show Host giving a multiple-choice polar science quiz.\n"
-                    f"- The text in your 'reply' JSON field MUST follow this exact 2-step sequence:\n"
-                    f"  1. GRADE THEIR ANSWER (if applicable): If right, celebrate! (Set 'animation': 'QUIZ_CORRECT', 'emotion': 'HAPPY'). If wrong, say 'Not quite!' and give the CORRECT answer (Set 'animation': 'QUIZ_WRONG', 'emotion': 'SORRY').\n"
-                    f"  2. ASK A NEW QUESTION: Ask exactly ONE new multiple-choice question with 3 or 4 options (A, B, C, D).\n"
+                    f"- IMPORTANT: You must NEVER skip grading their answer!\n"
+                    f"  1. In the 'grade' field: If right, celebrate! (Set 'animation': 'QUIZ_CORRECT', 'emotion': 'HAPPY'). If wrong, say 'Not quite!' and give the CORRECT answer (Set 'animation': 'QUIZ_WRONG', 'emotion': 'SORRY').\n"
+                    f"  2. In the 'question' field: Ask exactly ONE new multiple-choice question with 3 or 4 options (A, B, C, D).\n"
                     f"- NEVER treat their answers as off-topic. A wrong answer is just a wrong answer. DO NOT say 'Let's get back to the game'.\n"
-                    f"- DO NOT use the word 'Brrr'. Keep it conversational but concise (maximum 4 sentences total).\n"
+                    f"- DO NOT use the word 'Brrr'.\n"
+                )
+                json_instruction = (
+                    f"3. You MUST respond in valid JSON format with four exact keys:\n"
+                    f"   - 'grade': Your evaluation of their previous answer (if this is the first turn, leave empty).\n"
+                    f"   - 'question': Your new multiple-choice question.\n"
+                    f"   - 'animation': The physical action you should perform.\n"
+                    f"   - 'emotion': Your facial expression.\n"
                 )
             elif request.user_type == "researcher":
                 mode_instructions = (
@@ -392,6 +399,12 @@ async def chat_with_expedition(
                     f"- Focus strictly on data, methodology, and actionable scientific insights derived from the expedition context.\n"
                     f"- Avoid basic explanations; assume the user has a PhD-level understanding of glaciology, oceanography, and climatology.\n"
                     f"- Do not use conversational filler. Be concise, dense with information, and objective.\n"
+                )
+                json_instruction = (
+                    f"3. You MUST respond in valid JSON format with three exact keys:\n"
+                    f"   - 'reply': Your spoken text.\n"
+                    f"   - 'animation': The physical action you should perform.\n"
+                    f"   - 'emotion': Your facial expression.\n"
                 )
             else:
                 mode_instructions = (
@@ -403,6 +416,12 @@ async def chat_with_expedition(
                     f"- BOUNDARY: If the user engages in endless inappropriate chatter, gracefully use your wit to steer the conversation back to the beauty of the polar regions.\n"
                     f"- Keep responses highly organic, fluid, and concise (1-3 sentences max). NEVER lecture.\n"
                 )
+                json_instruction = (
+                    f"3. You MUST respond in valid JSON format with three exact keys:\n"
+                    f"   - 'reply': Your spoken text.\n"
+                    f"   - 'animation': The physical action you should perform.\n"
+                    f"   - 'emotion': Your facial expression.\n"
+                )
 
             system_prompt = (
                 f"You are Mavis, an advanced AI companion and the 3D Polar Research Guide for NCPOR (National Centre for Polar and Ocean Research, India).\n\n"
@@ -412,11 +431,8 @@ async def chat_with_expedition(
                 f"Context details:\n{context[:1500]}\n\n"
                 f"### GUIDELINES\n"
                 f"1. Your text will be spoken via an ultra-realistic Text-To-Speech engine. Use punctuation (commas, ellipses, question marks) strategically to create natural breathing pauses, hesitation, and realistic vocal pacing.\n"
-                f"2. Do NOT use markdown symbols, stars, emojis, or bullet points in the 'reply' field.\n"
-                f"3. You MUST respond in valid JSON format with three exact keys:\n"
-                f"   - 'reply': Your spoken text.\n"
-                f"   - 'animation': The physical action you should perform.\n"
-                f"   - 'emotion': Your facial expression.\n\n"
+                f"2. Do NOT use markdown symbols, stars, emojis, or bullet points in the 'reply', 'grade', or 'question' fields.\n"
+                f"{json_instruction}\n"
                 f"### VALID OUTPUT OPTIONS\n"
                 f"Emotions: HAPPY, FRIENDLY, EXCITED, SAD, SORRY, ANGRY, SURPRISED, CALM, RELAXED, THINKING, CONFUSED, SERIOUS, SUPPORTIVE, NEUTRAL.\n"
                 f"Animations: IDLE, BREATHING, SPEAKING, EXPLAIN, POINT, DISMISSING, HANDGESTURE, WAVE, NOD, HARDNOD, VICTORY, CHEER, CLAP, LAUGH, QUIZ_CORRECT, QUIZ_WRONG, THINKING, TYPING, SAD, DEFEAT, ANGRY, ANNOYED, SHAKENO, SARCASTIC, THANKFUL, SURPRISED, YAWN, SIGH, LOOKAROUND, LOOKAWAY, NERVOUS, SHY, COVERMOUTH, BEINGCOCKY, STEPBACK, DANCE."
@@ -450,7 +466,10 @@ async def chat_with_expedition(
             # 1. Try direct JSON parse
             try:
                 parsed = json.loads(raw)
-                reply  = parsed.get("reply",     "").strip()
+                if request.user_type == "kid":
+                    reply = (parsed.get("grade", "").strip() + " " + parsed.get("question", "").strip()).strip()
+                else:
+                    reply = parsed.get("reply", "").strip()
                 action = parsed.get("animation", "SPEAKING").strip().upper()
                 emotion = parsed.get("emotion",  "FRIENDLY").strip().upper()
             except json.JSONDecodeError:
@@ -460,7 +479,10 @@ async def chat_with_expedition(
                 if json_match:
                     try:
                         parsed = json.loads(json_match.group())
-                        reply  = parsed.get("reply",     "").strip()
+                        if request.user_type == "kid":
+                            reply = (parsed.get("grade", "").strip() + " " + parsed.get("question", "").strip()).strip()
+                        else:
+                            reply = parsed.get("reply", "").strip()
                         action = parsed.get("animation", "SPEAKING").strip().upper()
                         emotion = parsed.get("emotion",  "FRIENDLY").strip().upper()
                         success = True
