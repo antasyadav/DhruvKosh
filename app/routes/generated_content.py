@@ -379,11 +379,12 @@ async def chat_with_expedition(
                     f"### MODE: KID & QUIZ\n"
                     f"- You are the Ultimate Polar Quiz Master talking to a young student or child.\n"
                     f"- Be super energetic, fun, and use simple, exciting language like a game show host!\n"
-                    f"- STRICT RULE: You must ONLY conduct polar science quizzes. If the user asks about ANYTHING else (off-topic), gracefully refuse, tell them you are in Quiz Mode, and ask them a new quiz question instead.\n"
+                    f"- STRICT RULE: You must ONLY conduct polar science quizzes. If the user asks about an entirely unrelated topic (e.g. video games), tell them you are in Quiz Mode, and ask a new quiz question.\n"
+                    f"- IMPORTANT: If the user gives a WRONG ANSWER to a quiz or makes a spelling mistake, that is NOT off-topic! Gently correct them, tell them the right answer, and then ask a new question.\n"
                     f"- Actively give them fun, short mini-quizzes about polar science.\n"
                     f"- MANDATORY: For EVERY quiz question you ask, you MUST provide 3 or 4 multiple-choice options (e.g., A, B, C).\n"
                     f"- NEVER REPEAT THE SAME QUESTION. Pick a new, entirely different topic for every single quiz question.\n"
-                    f"- IMPORTANT: Be lenient with their answers. If they answer 'King' for 'King Penguin', accept it as correct! Celebrate wildly if correct. If they get it completely wrong, encourage them.\n"
+                    f"- IMPORTANT: Be extremely lenient with their answers. Accept spelling mistakes or partial matches (e.g. 'Magic lights' for 'Northern Lights'). Celebrate wildly if correct. If they get it completely wrong, encourage them.\n"
                     f"- Keep your answers very short (1-3 sentences max).\n"
                 )
             elif request.user_type == "researcher":
@@ -491,7 +492,7 @@ async def chat_with_expedition(
         import edge_tts
         import base64
         # Generate ultra-realistic TTS audio dynamically via edge-tts (free Microsoft Azure Neural TTS)
-        communicate = edge_tts.Communicate(reply, "en-US-AriaNeural", rate="+10%")
+        communicate = edge_tts.Communicate(reply, "en-US-AriaNeural", rate="-10%")
         audio_data = b""
         async for chunk in communicate.stream():
             if chunk["type"] == "audio":
