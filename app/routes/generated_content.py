@@ -442,7 +442,8 @@ async def chat_with_expedition(
             if request.history:
                 for h in request.history[-6:]:
                     if h.get("role") in ["user", "assistant"]:
-                        msgs.append({"role": h["role"], "content": h.get("content", "")})
+                        content_text = h.get("text") or h.get("content") or ""
+                        msgs.append({"role": h["role"], "content": content_text})
             
             msgs.append({"role": "user", "content": request.message})
 
